@@ -17,7 +17,7 @@
 
 	<properties>
 		<java.version>17</java.version>
-		 <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -88,7 +88,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.2</version>
 				<configuration>
-					<argLine>${argLine} -Xmx2048m</argLine>
+					<!-- Remove unnecessary JVM argument -->
 				</configuration>
 			</plugin>
 
@@ -121,6 +121,4 @@
 			<url>file://jarstaging</url>
 		</repository>
 	</distributionManagement>
-
-
 </project>
