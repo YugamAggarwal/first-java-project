@@ -4,9 +4,12 @@ pipeline {
             label 'maven'
         }
     }
-    stages('Clone-code') {
-        steps {
-            git banch: 'main', url: 'https://github.com/YugamAggarwal/first-java-project.git'
+    stages {
+        stage('Clone-code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/YugamAggarwal/first-java-project.git'
+            }
         }
     }
 }
+
