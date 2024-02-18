@@ -5,7 +5,8 @@ pipeline {
         }
     }
     environment {
-        PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
+        PATH = "/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH" // Update the PATH to point to Java 17
+        JAVA_HOME = "/usr/lib/jvm/java-17-openjdk-amd64" // Set JAVA_HOME to Java 17
     }
     stages {
         stage('Build with Java 11') {
