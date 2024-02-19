@@ -1,6 +1,6 @@
 def registry = 'https://yugam.jfrog.io/'
 
-def imageName = 'yugam.jfrog.io/fjp-docker/fjp-docker-image'
+def imageName = 'yugam.jfrog.io/fjp-docker-docker-local/fjp-docker-image'
 def version   = '2.1.2'
 
 pipeline {
@@ -14,7 +14,7 @@ pipeline {
         JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
     }
     stages {
-        stage('build') {
+        stage('Build Stage') {
             steps {
                 sh 'mvn clean deploy'
             }
@@ -41,14 +41,14 @@ pipeline {
                 }
             }
         }
-        stage(' Docker Build ') {
+        stage('Docker Build') {
             steps {
                 script {
                     app = docker.build(imageName + ':' + version)
                 }
             }
         }
-        stage(' Docker Publish ') {
+        stage('Docker Publish') {
             steps {
                 script {
                     docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
