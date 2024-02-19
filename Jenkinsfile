@@ -16,11 +16,11 @@ pipeline {
         }
         stage ("Sonar Analysis") {
             environment {
-               scannerHome = tool 'sonar-scanner-2'
+               scannerHome = tool 'sonar-scanner'
                JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
             }
             steps {
-                withSonarQubeEnv('sonarqube-server') {    
+                withSonarQubeEnv('sonar-qube-server') {    
                     sh "${scannerHome}/bin/sonar-scanner"
                 }    
                
