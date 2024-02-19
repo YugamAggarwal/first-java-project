@@ -14,18 +14,17 @@ pipeline {
                 sh 'mvn clean deploy'
             }
         }
-        stage('Sonar Analysis') {
+        stage ("Sonar Analysis") {
             environment {
-                scannerHome = tool 'sonar-scanner'
-                JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+               scannerHome = tool 'sonar-scanner-2'
+               JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
             }
             steps {
-                echo '<--------------- Sonar Analysis started  --------------->'
-                withSonarQubeEnv('sonarqube-server') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                    echo '<--------------- Sonar Analysis stopped  --------------->'
-                }
-            }
+                withSonarQubeEnv('sonarqube-server') {    
+                    sh "${scannerHome}/bin/sonar-scanner-2"
+                }    
+               
+            }   
         }
     }
 }
