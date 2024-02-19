@@ -17,7 +17,7 @@ pipeline {
         stage ("Sonar Analysis") {
             environment {
                scannerHome = tool 'sonar-scanner'
-               JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+               
             }
             steps {
                 withSonarQubeEnv('sonar-qube-server') {    
