@@ -1,4 +1,8 @@
 def registry = 'https://yugam.jfrog.io/'
+
+def imageName = 'yugam.jfrog.io/fjp-docker/fjp-docker-image'
+def version   = '2.1.2'
+
 pipeline {
     agent {
         node {
@@ -15,7 +19,6 @@ pipeline {
                 sh 'mvn clean deploy'
             }
         }
-        
         stage('Jar Publish') {
             steps {
                 script {
@@ -35,6 +38,22 @@ pipeline {
                     def buildInfo = server.upload(uploadSpec)
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
+                }
+            }
+        }
+        stage(' Docker Build ') {
+            steps {
+                script {
+                    app = docker.build(imageName + ':' + version)
+                }
+            }
+        }
+        stage(' Docker Publish ') {
+            steps {
+                script {
+                    docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                        app.push()
+                    }
                 }
             }
         }
