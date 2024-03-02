@@ -1,4 +1,4 @@
-def registry = 'yugam.jfrog.io'
+def registry = 'https://yugam.jfrog.io'
 def imageName = 'artifactory/image-docker-local/first-java-project'
 def version = '2.1.2'
 
