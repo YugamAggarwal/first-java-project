@@ -1,7 +1,6 @@
 def registry = 'https://yugam.jfrog.io'
 def imageName = 'yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
 def version   = '2.1.2'
-def reg = 'https://yugam.jfrog.io/artifactory/image-docker-local/'
 pipeline {
     agent {
         node {
@@ -17,6 +16,13 @@ pipeline {
                 echo '----------- build started ----------'
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
                 echo '----------- build complted ----------'
+            }
+        }
+        stage('test') {
+            steps {
+                echo '----------- unit test started ----------'
+                sh 'mvn surefire-report:report'
+                echo '----------- unit test Complted ----------'
             }
         }
         stage('Jar Publish') {
@@ -56,12 +62,12 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'
-                    docker.withRegistry(reg, '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                    docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
                         app.push()
                     }
                     echo '<--------------- Docker Publish Ended --------------->'
                 }
             }
-            }
+        }
     }
 }
