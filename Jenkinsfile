@@ -42,15 +42,15 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    app = docker.build("${registry}/${imageName}")
+                    app = docker.build("${registry}/${imageName}:${version}")
                 }
             }
         }
         stage('Docker Publish') {
             steps {
                 script {
-                    docker.withRegistry('yugam.jfrog.io', '652109e4-04f2-4dbb-abf7-402fa739452e') {
-                        app.push("${version}")
+                    docker.withRegistry('', '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                        app.push()
                     }
                 }
             }
