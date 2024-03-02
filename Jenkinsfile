@@ -49,7 +49,7 @@ pipeline {
         stage('Docker Publish') {
             steps {
                 script {
-                    docker.withRegistry('https://yugam.jfrog.io/artifactory/image-docker-local/', '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                    docker.withRegistry('yugam.jfrog.io', '652109e4-04f2-4dbb-abf7-402fa739452e') {
                         app.push("${version}")
                     }
                 }
