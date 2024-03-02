@@ -1,6 +1,6 @@
 def registry = 'https://yugam.jfrog.io/'
 
-def imageName = 'yugam.jfrog.io/fjp-docker-docker-local/fjp-docker-image'
+def imageName = 'https://yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
 def version   = '2.1.2'
 
 pipeline {
