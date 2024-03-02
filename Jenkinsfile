@@ -1,4 +1,4 @@
-def registry = 'https://yugam.jfrog.io'
+def registry = 'yugam.jfrog.io'
 def imageName = 'artifactory/image-docker-local/first-java-project'
 def version = '2.1.2'
 
@@ -49,7 +49,7 @@ pipeline {
         stage('Docker Publish') {
             steps {
                 script {
-                    docker.withRegistry("${registry}", '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                    docker.withRegistry('https://yugam.jfrog.io/artifactory/image-docker-local/', '652109e4-04f2-4dbb-abf7-402fa739452e') {
                         app.push("${version}")
                     }
                 }
