@@ -1,6 +1,7 @@
 def registry = 'https://yugam.jfrog.io'
-def imageName = 'yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
-def version   = '2.1.2'
+def imageName = 'image-docker-local/first-java-project'
+def version = '2.1.2'
+
 pipeline {
     agent {
         node {
@@ -9,32 +10,34 @@ pipeline {
     }
     environment {
         PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
+        DOCKER_REGISTRY = 'https://yugam.jfrog.io/artifactory/image-docker-local'
+        DOCKER_CREDENTIALS_ID = '652109e4-04f2-4dbb-abf7-402fa739452e'
     }
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
-                echo '----------- build started ----------'
+                echo '----------- Build started ----------'
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
-                echo '----------- build complted ----------'
+                echo '----------- Build completed ----------'
             }
         }
         stage('Jar Publish') {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer url:registry + '/artifactory' ,  credentialsId:'652109e4-04f2-4dbb-abf7-402fa739452e'
+                    def server = Artifactory.newServer url: registry + '/artifactory', credentialsId: DOCKER_CREDENTIALS_ID
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
-                          "files": [
+                        "files": [
                             {
-                              "pattern": "jarstaging/(*)",
-                              "target": "final-libs-release-local/{1}",
-                              "flat": "false",
-                              "props" : "${properties}",
-                              "exclusions": [ "*.sha1", "*.md5"]
+                                "pattern": "jarstaging/(*)",
+                                "target": "final-libs-release-local/{1}",
+                                "flat": "false",
+                                "props": "${properties}",
+                                "exclusions": ["*.sha1", "*.md5"]
                             }
-                         ]
-                     }"""
+                        ]
+                    }"""
                     def buildInfo = server.upload(uploadSpec)
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
@@ -42,21 +45,21 @@ pipeline {
                 }
             }
         }
-        stage(' Docker Build ') {
+        stage('Docker Build') {
             steps {
                 script {
                     echo '<--------------- Docker Build Started --------------->'
-                    app = docker.build(imageName + ':' + version)
-                    echo '<--------------- Docker Build Ends --------------->'
+                    def app = docker.build("${registry}/artifactory/${imageName}:${version}")
+                    echo '<--------------- Docker Build Ended --------------->'
                 }
             }
         }
-        stage(' Docker Publish ') {
+        stage('Docker Publish') {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'
-                    docker.withRegistry('https://yugam.jfrog.io', '652109e4-04f2-4dbb-abf7-402fa739452e') {
-                        app.push(imageName + ':' + version)
+                    docker.withRegistry(DOCKER_REGISTRY, DOCKER_CREDENTIALS_ID) {
+                        app.push("${version}")
                     }
                     echo '<--------------- Docker Publish Ended --------------->'
                 }
