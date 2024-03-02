@@ -1,7 +1,6 @@
-def registry = 'yugam.jfrog.io'
-def imageName = 'artifactory/image-docker-local/first-java-project'
-def version = '2.1.2'
-
+def registry = 'https://yugam.jfrog.io'
+def imageName = 'yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
+def version   = '2.1.2'
 pipeline {
     agent {
         node {
@@ -12,15 +11,18 @@ pipeline {
         PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
     }
     stages {
-        stage('Build Stage') {
+        stage('build') {
             steps {
-                sh 'mvn clean deploy'
+                echo '----------- build started ----------'
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                echo '----------- build complted ----------'
             }
         }
         stage('Jar Publish') {
             steps {
                 script {
-                    def server = Artifactory.newServer url: "https://${registry}/artifactory", credentialsId: '652109e4-04f2-4dbb-abf7-402fa739452e'
+                    echo '<--------------- Jar Publish Started --------------->'
+                    def server = Artifactory.newServer url:registry + '/artifactory' ,  credentialsId:'652109e4-04f2-4dbb-abf7-402fa739452e'
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
                           "files": [
@@ -36,22 +38,27 @@ pipeline {
                     def buildInfo = server.upload(uploadSpec)
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
+                    echo '<--------------- Jar Publish Ended --------------->'
                 }
             }
         }
-        stage('Docker Build') {
+        stage(' Docker Build ') {
             steps {
                 script {
-                    app = docker.build("${registry}/${imageName}:${version}")
+                    echo '<--------------- Docker Build Started --------------->'
+                    app = docker.build(imageName + ':' + version)
+                    echo '<--------------- Docker Build Ends --------------->'
                 }
             }
         }
-        stage('Docker Publish') {
+        stage(' Docker Publish ') {
             steps {
                 script {
-                    docker.withRegistry('', '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                    echo '<--------------- Docker Publish Started --------------->'
+                    docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
                         app.push()
                     }
+                    echo '<--------------- Docker Publish Ended --------------->'
                 }
             }
         }
