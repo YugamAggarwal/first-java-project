@@ -1,7 +1,6 @@
-def registry = 'https://yugam.jfrog.io/'
-
-def imageName = 'https://yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
-def version   = '2.1.2'
+def registry = 'yugam.jfrog.io'
+def imageName = 'artifactory/image-docker-local/first-java-project'
+def version = '2.1.2'
 
 pipeline {
     agent {
@@ -11,7 +10,6 @@ pipeline {
     }
     environment {
         PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
-
     }
     stages {
         stage('Build Stage') {
@@ -22,7 +20,7 @@ pipeline {
         stage('Jar Publish') {
             steps {
                 script {
-                    def server = Artifactory.newServer url:registry + '/artifactory' ,  credentialsId:'652109e4-04f2-4dbb-abf7-402fa739452e'
+                    def server = Artifactory.newServer url: "https://${registry}/artifactory", credentialsId: '652109e4-04f2-4dbb-abf7-402fa739452e'
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
                           "files": [
@@ -44,15 +42,15 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    app = docker.build(imageName + ':' + version)
+                    app = docker.build("${registry}/${imageName}")
                 }
             }
         }
         stage('Docker Publish') {
             steps {
                 script {
-                    docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
-                        app.push()
+                    docker.withRegistry("${registry}", '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                        app.push("${version}")
                     }
                 }
             }
