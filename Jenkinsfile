@@ -1,5 +1,5 @@
 def registry = 'https://yugam.jfrog.io'
-def imageName = 'yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
+def imageName = 'yugam.jfrog.io/image-docker-local/first-java-project'
 def version   = '2.1.2'
 pipeline {
     agent {
