@@ -61,12 +61,12 @@ pipeline {
         stage(' Docker Publish ') {
             steps {
                 script {
-            echo '<--------------- Docker Publish Started --------------->'
-            docker.withRegistry('https://yugam.jfrog.io', '652109e4-04f2-4dbb-abf7-402fa739452e') {
-                app.push("${registry}/artifactory/image-docker-local/${imageName}:${version}")
-            }
-            echo '<--------------- Docker Publish Ended --------------->'
-        }
+                    echo '<--------------- Docker Publish Started --------------->'
+                    docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
+                        app.push()
+                    }
+                    echo '<--------------- Docker Publish Ended --------------->'
+                }
             }
         }
     }
