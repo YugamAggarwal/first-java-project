@@ -1,6 +1,7 @@
 def registry = 'https://yugam.jfrog.io'
-def imageName = 'yugam.jfrog.io/artifactory/image-docker-local/first-java-project'
-def version   = '2.1.2'
+def imageName = 'image-docker-local/first-java-project'
+def version = '2.1.2'
+
 pipeline {
     agent {
         node {
@@ -15,21 +16,21 @@ pipeline {
             steps {
                 echo '----------- build started ----------'
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
-                echo '----------- build complted ----------'
+                echo '----------- build completed ----------'
             }
         }
         stage('test') {
             steps {
                 echo '----------- unit test started ----------'
                 sh 'mvn surefire-report:report'
-                echo '----------- unit test Complted ----------'
+                echo '----------- unit test completed ----------'
             }
         }
         stage('Jar Publish') {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer url:registry + '/artifactory' ,  credentialsId:'652109e4-04f2-4dbb-abf7-402fa739452e'
+                    def server = Artifactory.newServer url: registry, credentialsId: '652109e4-04f2-4dbb-abf7-402fa739452e'
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
                           "files": [
@@ -49,23 +50,15 @@ pipeline {
                 }
             }
         }
-        stage(' Docker Build ') {
+        stage('Docker Build and Publish') {
             steps {
                 script {
-                    echo '<--------------- Docker Build Started --------------->'
-                    app = docker.build(imageName + ':' + version)
-                    echo '<--------------- Docker Build Ends --------------->'
-                }
-            }
-        }
-        stage(' Docker Publish ') {
-            steps {
-                script {
-                    echo '<--------------- Docker Publish Started --------------->'
+                    echo '<--------------- Docker Build and Publish Started --------------->'
+                    def dockerImage = docker.build imageName + ':' + version
                     docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
-                        app.push()
+                        dockerImage.push()
                     }
-                    echo '<--------------- Docker Publish Ended --------------->'
+                    echo '<--------------- Docker Build and Publish Ended --------------->'
                 }
             }
         }
