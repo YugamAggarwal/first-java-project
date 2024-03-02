@@ -11,13 +11,13 @@ pipeline {
         PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
     }
     stages {
-        // stage('build') {
-        //     steps {
-        //         echo '----------- build started ----------'
-        //         sh 'mvn clean deploy -Dmaven.test.skip=true'
-        //         echo '----------- build complted ----------'
-        //     }
-        // }
+        stage('build') {
+            steps {
+                echo '----------- build started ----------'
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                echo '----------- build complted ----------'
+            }
+        }
         // stage('test') {
         //     steps {
         //         echo '----------- unit test started ----------'
@@ -49,15 +49,15 @@ pipeline {
         //         }
         //     }
         // }
-        // stage(' Docker Build ') {
-        //     steps {
-        //         script {
-        //             echo '<--------------- Docker Build Started --------------->'
-        //             app = docker.build(imageName + ':' + version)
-        //             echo '<--------------- Docker Build Ends --------------->'
-        //         }
-        //     }
-        // }
+        stage(' Docker Build ') {
+            steps {
+                script {
+                    echo '<--------------- Docker Build Started --------------->'
+                    app = docker.build(imageName + ':' + version)
+                    echo '<--------------- Docker Build Ends --------------->'
+                }
+            }
+        }
         stage(' Docker Publish ') {
             steps {
                 script {
