@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
-                    sh 'helm upgrade fjp fjp-0.1.0.tgz'
+                    sh 'helm install fjp fjp-0.1.0.tgz'
                     echo '<--------------- Helm deploy Completed --------------->'
                 }
             }
