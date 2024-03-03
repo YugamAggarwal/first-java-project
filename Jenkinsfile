@@ -11,21 +11,21 @@ pipeline {
         PATH = "/opt/apache-maven-3.9.6/bin:$PATH"
     }
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
-                echo '----------- build started ----------'
+                echo '----------- Build Started ----------'
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
-                echo '----------- build complted ----------'
+                echo '----------- Build Completed ----------'
             }
         }
-        stage('test') {
+        stage('Unit Test') {
             steps {
-                echo '----------- unit test started ----------'
+                echo '----------- Unit Test Started ----------'
                 sh 'mvn surefire-report:report'
-                echo '----------- unit test Complted ----------'
+                echo '----------- unit test Completed ----------'
             }
         }
-        stage('Jar Publish') {
+        stage('Publish .jar File') {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
@@ -45,27 +45,27 @@ pipeline {
                     def buildInfo = server.upload(uploadSpec)
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
-                    echo '<--------------- Jar Publish Ended --------------->'
+                    echo '<--------------- Jar Publish Completed --------------->'
                 }
             }
         }
-        stage(' Docker Build ') {
+        stage(' Docker Image Build ') {
             steps {
                 script {
                     echo '<--------------- Docker Build Started --------------->'
                     app = docker.build(imageName + ':' + version)
-                    echo '<--------------- Docker Build Ends --------------->'
+                    echo '<--------------- Docker Build Completed --------------->'
                 }
             }
         }
-        stage(' Docker Publish ') {
+        stage(' Publish Docker Image ') {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'
                     docker.withRegistry(registry, '652109e4-04f2-4dbb-abf7-402fa739452e') {
                         app.push()
                     }
-                    echo '<--------------- Docker Publish Ended --------------->'
+                    echo '<--------------- Docker Publish Completed --------------->'
                 }
             }
         }
@@ -73,8 +73,8 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
-                    sh 'helm install fjp fjp-0.1.0.tgz'
-                    echo '<--------------- Helm deploy Ends --------------->'
+                    sh 'helm upgrade fjp fjp-0.1.0.tgz'
+                    echo '<--------------- Helm deploy Completed --------------->'
                 }
             }
         }
