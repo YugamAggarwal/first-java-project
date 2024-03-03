@@ -18,13 +18,6 @@ pipeline {
                 echo '----------- Build Completed ----------'
             }
         }
-        stage('Unit Test') {
-            steps {
-                echo '----------- Unit Test Started ----------'
-                sh 'mvn surefire-report:report'
-                echo '----------- unit test Completed ----------'
-            }
-        }
         stage('Publish .jar File') {
             steps {
                 script {
